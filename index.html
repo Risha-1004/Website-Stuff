@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Better Days Help - Health Tracking Journal</title>
+    <style>
+        :root {
+            --primary: #5d5fef;
+            --secondary: #f0f2ff;
+            --accent: #ff6b6b;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --cloud-bg: #f0f5ff;
+            --sky-bg: #e6f7ff;
+            --sunset-bg: #fff0e6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.5s ease;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* Theme Modes */
+        body.cloud-mode {
+            background-color: var(--cloud-bg);
+            --secondary: var(--cloud-bg);
+        }
+        
+        body.sky-mode {
+            background-color: var(--sky-bg);
+            --secondary: var(--sky-bg);
+        }
+        
+        body.sunset-mode {
+            background-color: var(--sunset-bg);
+            --secondary: var(--sunset-bg);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, var(--primary), #6b46c1);
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .tracker-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tracker-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tracker-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .tracker-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .tracker-content {
+            display: none;
+        }
+        
+        .tracker-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .mood-option {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .mood-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .mood-option.selected {
+            border: 2px solid var(--primary);
+            background-color: var(--secondary);
+        }
+        
+        .mood-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .habit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .habit-card {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .habit-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .resources-list {
+            list-style: none;
+        }
+        
+        .resources-list li {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .resources-list a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Theme Selector */
+        .theme-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+        
+        .theme-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+        }
+        
+        .theme-btn.cloud {
+            background-color: var(--cloud-bg);
+        }
+        
+        .theme-btn.sky {
+            background-color: var(--sky-bg);
+        }
+        
+        .theme-btn.sunset {
+            background-color: var(--sunset-bg);
+        }
+        
+        .theme-btn.active {
+            border-color: var(--primary);
+        }
+        
+        /* Video Resources */
+        .video-resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .video-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background-color: #eee;
+        }
+        
+        .video-thumbnail iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-info {
+            padding: 1rem;
+        }
+        
+        .video-info h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Gender Selection */
+        .gender-selection {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .gender-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #eee;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .gender-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-selector {
+                margin-left: 0;
+                margin-top: 1rem;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="default-mode">
+    <header>
+        <nav>
+            <a href="#" class="logo">Better Days Help</a>
+            <button class="mobile-menu-btn">☰</button>
+            <div class="nav-links">
+                <a href="#journal">Journal</a>
+                <a href="#trackers">Trackers</a>
+                <a href="#resources">Resources</a>
+                <a href="#contact">Contact</a>
+                <div class="theme-selector">
+                    <button class="theme-btn cloud" data-theme="cloud" title="Cloud Mode"></button>
+                    <button class="theme-btn sky" data-theme="sky" title="Sky Mode"></button>
+                    <button class="theme-btn sunset" data-theme="sunset" title="Sunset Mode"></button>
+                </div>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>Your Companion for Better Mental & Physical Health</h1>
+        <p>Track your mood, build healthy habits, set achievable goals, and find support when you need it most.</p>
+        <a href="#" class="btn">Get Started</a>
+    </section>
+    
+    <!-- Gender Selection -->
+    <section class="container" id="gender-selection">
+        <div class="tracker-container">
+            <h3>Personalize Your Experience</h3>
+            <p>Select your gender to customize your tracking experience:</p>
+            
+            <div class="gender-selection">
+                <button class="gender-btn active" data-gender="female">Female</button>
+                <button class="gender-btn" data-gender="male">Male</button>
+                <button class="gender-btn" data-gender="other">Other/Prefer not to say</button>
+            </div>
+            
+            <p><small>This only affects which tracking options are shown (like menstrual cycle tracking). All other features remain the same.</small></p>
+        </div>
+    </section>
+    
+    <section id="journal" class="container">
+        <div class="section-title">
+            <h2>Journal Your Thoughts</h2>
+            <p>Express yourself freely in a safe, private space</p>
+        </div>
+        
+        <div class="tracker-container">
+            <div class="form-group">
+                <label for="journal-date">Date</label>
+                <input type="date" id="journal-date" name="journal-date">
+            </div>
+            
+            <div class="form-group">
+                <label for="journal-title">Title</label>
+                <input type="text" id="journal-title" name="journal-title" placeholder="How are you feeling today?">
+            </div>
+            
+            <div class="form-group">
+                <label for="journal-entry">Your Entry</label>
+                <textarea id="journal-entry" name="journal-entry" placeholder="Write whatever's on your mind..."></textarea>
+            </div>
+            
+            <button class="btn btn-primary">Save Entry</button>
+        </div>
+    </section>
+    
+    <section id="trackers" class="container">
+        <div class="section-title">
+            <h2>Health Trackers</h2>
+            <p>Monitor your wellbeing with our comprehensive tracking tools</p>
+        </div>
+        
+        <div class="tracker-container">
+            <div class="tracker-tabs">
+                <div class="tracker-tab active" data-tab="mood">Mood</div>
+                <div class="tracker-tab" data-tab="habits">Habits</div>
+                <div class="tracker-tab" data-tab="goals">Goals</div>
+                <div class="tracker-tab female-only" data-tab="cycle">Cycle Tracker</div>
+            </div>
+            
+            <div id="mood-tracker" class="tracker-content active">
+                <h3>How are you feeling today?</h3>
+                <div class="mood-grid">
+                    <div class="mood-option">
+                        <div class="mood-emoji">😊</div>
+                        <div>Happy</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-emoji">😔</div>
+                        <div>Sad</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-emoji">😠</div>
+                        <div>Angry</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-emoji">😨</div>
+                        <div>Anxious</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-emoji">😌</div>
+                        <div>Calm</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-emoji">😴</div>
+                        <div>Tired</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mood-notes">Additional Notes</label>
+                    <textarea id="mood-notes" name="mood-notes" placeholder="Any specific reasons for your mood today?"></textarea>
+                </div>
+                
+                <button class="btn btn-primary">Save Mood</button>
+            </div>
+            
+            <div id="habits-tracker" class="tracker-content">
+                <h3>Daily Habits Tracker</h3>
+                <p>Check off the habits you've completed today:</p>
+                
+                <div class="habit-grid">
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit1">
+                        <label for="habit1">Drank 8 glasses of water</label>
+                    </div>
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit2">
+                        <label for="habit2">30 minutes of exercise</label>
+                    </div>
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit3">
+                        <label for="habit3">Healthy meals</label>
+                    </div>
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit4">
+                        <label for="habit4">8 hours of sleep</label>
+                    </div>
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit5">
+                        <label for="habit5">Meditation</label>
+                    </div>
+                    <div class="habit-card">
+                        <input type="checkbox" class="habit-checkbox" id="habit6">
+                        <label for="habit6">No alcohol</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label for="new-habit">Add Custom Habit</label>
+                    <input type="text" id="new-habit" name="new-habit" placeholder="Enter a new habit to track">
+                </div>
+                
+                <button class="btn btn-primary">Save Habits</button>
+            </div>
+            
+            <div id="goals-tracker" class="tracker-content">
+                <h3>Set Your Goals</h3>
+                
+                <div class="form-group">
+                    <label for="goal-title">Goal Title</label>
+                    <input type="text" id="goal-title" name="goal-title" placeholder="e.g. Exercise 3 times a week">
+                </div>
+                
+                <div class="form-group">
+                    <label for="goal-description">Description</label>
+                    <textarea id="goal-description" name="goal-description" placeholder="Describe your goal in detail"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="goal-deadline">Target Date</label>
+                    <input type="date" id="goal-deadline" name="goal-deadline">
+                </div>
+                
+                <div class="form-group">
+                    <label for="goal-priority">Priority</label>
+                    <select id="goal-priority" name="goal-priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary">Save Goal</button>
+                
+                <h4 style="margin-top: 2rem;">Your Current Goals</h4>
+                <div style="background-color: var(--light); padding: 1rem; border-radius: 5px; margin-top: 1rem;">
+                    <p>No active goals yet. Add your first goal above!</p>
+                </div>
+            </div>
+            
+            <div id="cycle-tracker" class="tracker-content">
+                <h3>Menstrual Cycle Tracker</h3>
+                
+                <div class="form-group">
+                    <label for="cycle-start">Last Period Start Date</label>
+                    <input type="date" id="cycle-start" name="cycle-start">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cycle-end">Last Period End Date</label>
+                    <input type="date" id="cycle-end" name="cycle-end">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cycle-length">Typical Cycle Length (days)</label>
+                    <input type="number" id="cycle-length" name="cycle-length" min="20" max="45" value="28">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cycle-symptoms">Symptoms</label>
+                    <textarea id="cycle-symptoms" name="cycle-symptoms" placeholder="Record any symptoms you're experiencing"></textarea>
+                </div>
+                
+                <button class="btn btn-primary">Save Cycle Data</button>
+                
+                <div style="margin-top: 2rem; padding: 1rem; background-color: var(--light); border-radius: 5px;">
+                    <h4>Cycle Prediction</h4>
+                    <p>Next period expected: <strong>May 28, 2023</strong></p>
+                    <p>Fertile window: <strong>May 14-18, 2023</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="resources" class="container">
+        <div class="section-title">
+            <h2>Resources & Crisis Support</h2>
+            <p>Help is available when you need it</p>
+        </div>
+        
+        <div class="tracker-container">
+            <h3>Yoga & Meditation Videos</h3>
+            <div class="video-resources">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <iframe src="https://www.youtube.com/embed/inpok4MKVLM" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Morning Yoga Flow</h4>
+                        <p>15 minute gentle yoga to start your day</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <iframe src="https://www.youtube.com/embed/O-6f5wQXSu8" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Anxiety Relief Meditation</h4>
+                        <p>10 minute guided meditation for anxiety</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <iframe src="https://www.youtube.com/embed/4pLUleLdwY4" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Bedtime Yoga for Sleep</h4>
+                        <p>20 minute relaxing routine before sleep</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <iframe src="https://www.youtube.com/embed/z6X5oEIg6Ak" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>Mindfulness for Beginners</h4>
+                        <p>5 minute introduction to mindfulness</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">Mental Health Resources</h3>
+            <ul class="resources-list">
+                <li><a href="https://www.who.int/mental_health/en/" target="_blank">World Health Organization - Mental Health</a> - Global mental health resources</li>
+                <li><a href="https://www.nami.org/" target="_blank">NAMI</a> - National Alliance on Mental Illness (US)</li>
+                <li><a href="https://www.mind.org.uk/" target="_blank">Mind</a> - Mental health charity (UK)</li>
+                <li><a href="https://www.beyondblue.org.au/" target="_blank">Beyond Blue</a> - Mental health support (Australia)</li>
+            </ul>
+            
+            <h3 style="margin-top: 2rem;">Crisis Hotlines</h3>
+            <ul class="resources-list">
+                <li><strong>International Suicide Hotlines:</strong> <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank">Find your country's hotline</a></li>
+                <li><strong>US:</strong> 988 Suicide & Crisis Lifeline</li>
+                <li><strong>UK:</strong> 116 123 (Samaritans)</li>
+                <li><strong>Canada:</strong> 1-833-456-4566</li>
+                <li><strong>Australia:</strong> 13 11 14</li>
+                <li><strong>India:</strong> 91-9820466726 (Aasra)</li>
+            </ul>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background-color: #fff8e1; border-left: 4px solid var(--warning);">
+                <h4>Emergency Assistance</h4>
+                <p>If you're in immediate danger or experiencing a medical emergency, please contact your local emergency services.</p>
+                <p><strong>International Emergency Numbers:</strong> 112 (many countries), 911 (US/Canada), 999 (UK), 000 (Australia)</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="container">
+        <div class="section-title">
+            <h2>Contact Us</h2>
+            <p>We're here to help and listen</p>
+        </div>
+        
+        <div class="contact-form">
+            <div class="form-group">
+                <label for="contact-name">Your Name</label>
+                <input type="text" id="contact-name" name="contact-name">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-email">Email Address</label>
+                <input type="email" id="contact-email" name="contact-email">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-subject">Subject</label>
+                <input type="text" id="contact-subject" name="contact-subject">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-message">Message</label>
+                <textarea id="contact-message" name="contact-message"></textarea>
+            </div>
+            
+            <button class="btn btn-primary">Send Message</button>
+            
+            <div style="margin-top: 2rem; text-align: center;">
+                <p>Or email us directly at: <a href="mailto:rishanbajaj1004@gmail.com">rishanbajaj1004@gmail.com</a></p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="logo" style="color: white;">Better Days Help</div>
+        <p>Your companion for mental and physical wellbeing</p>
+        
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#contact">Contact</a>
+            <a href="#resources">Resources</a>
+        </div>
+        
+        <p>© 2023 Better Days Help. All rights reserved.</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">This website is not a substitute for professional medical advice, diagnosis, or treatment.</p>
+    </footer>
+    
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tracker-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tracker-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tracker-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tracker`).classList.add('active');
+            });
+        });
+        
+        // Mood selection
+        document.querySelectorAll('.mood-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+        
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('show');
+        });
+        
+        // Set today's date as default in date fields
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('journal-date').value = today;
+        document.getElementById('cycle-start').value = today;
+        
+        // Theme switching
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove all theme classes
+                document.body.classList.remove('cloud-mode', 'sky-mode', 'sunset-mode');
+                
+                // Add selected theme class
+                const theme = btn.getAttribute('data-theme');
+                if (theme !== 'default') {
+                    document.body.classList.add(`${theme}-mode`);
+                }
+                
+                // Update active button
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        // Gender selection
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show/hide cycle tracker based on gender
+                const gender = btn.getAttribute('data-gender');
+                const cycleTab = document.querySelector('.tracker-tab[data-tab="cycle"]');
+                
+                if (gender === 'female') {
+                    cycleTab.style.display = 'block';
+                } else {
+                    cycleTab.style.display = 'none';
+                    
+                    // If cycle tab was active, switch to mood tab
+                    if (cycleTab.classList.contains('active')) {
+                        cycleTab.classList.remove('active');
+                        document.querySelector('.tracker-tab[data-tab="mood"]').click();
+                    }
+                }
+            });
+        });
+        
+        // Initialize - hide cycle tab if not female
+        document.querySelector('.tracker-tab[data-tab="cycle"]').style.display = 'none';
+    </script>
+</body>
+</html>
